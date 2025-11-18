@@ -1,0 +1,69 @@
+{
+  "_note": "This file contains multiple test cases. Use individual files in test-data/ folder for direct API calls, or extract the nested objects below.",
+  "provider1": {
+    "name": "Dr. Sarah Johnson",
+    "email": "sarah.johnson@healthcare.com",
+    "password": "SecurePass123!",
+    "phone": "+1-555-0123",
+    "address": "123 Medical Center Drive",
+    "city": "New York",
+    "state": "New York",
+    "pincode": 10001,
+    "country": "United States"
+  },
+  "provider2": {
+    "name": "Dr. Michael Chen",
+    "email": "michael.chen@healthcare.com",
+    "password": "HealthCare2024!",
+    "phone": "+1-555-0124",
+    "address": "456 Wellness Boulevard",
+    "city": "Los Angeles",
+    "state": "California",
+    "pincode": 90001,
+    "country": "United States"
+  },
+  "provider3": {
+    "name": "Dr. Emily Rodriguez",
+    "email": "emily.rodriguez@healthcare.com",
+    "password": "MedPass456!",
+    "phone": "+1-555-0125",
+    "address": "789 Health Plaza",
+    "city": "Chicago",
+    "state": "Illinois",
+    "pincode": 60601,
+    "country": "United States"
+  },
+  "provider4": {
+    "name": "Dr. James Wilson",
+    "email": "james.wilson@healthcare.com",
+    "password": "Provider789!",
+    "phone": "+1-555-0126",
+    "address": "321 Care Avenue",
+    "city": "Houston",
+    "state": "Texas",
+    "pincode": 77001,
+    "country": "United States"
+  },
+  "provider5": {
+    "name": "Dr. Priya Patel",
+    "email": "priya.patel@healthcare.com",
+    "password": "DoctorPass2024!",
+    "phone": "+1-555-0127",
+    "address": "654 Medical Way",
+    "city": "Phoenix",
+    "state": "Arizona",
+    "pincode": 85001,
+    "country": "United States"
+  },
+  "minimal_required": {
+    "name": "Dr. Test Provider",
+    "email": "test.provider@healthcare.com",
+    "password": "Test123456!"
+  },
+  "minimal_with_phone": {
+    "name": "Dr. Minimal Provider",
+    "email": "minimal.provider@healthcare.com",
+    "password": "Minimal123!",
+    "phone": "+1-555-9999"
+  }
+}
