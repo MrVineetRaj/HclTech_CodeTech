@@ -1,0 +1,12 @@
+{
+  "name": "Dr. Sarah Johnson",
+  "email": "sarah.johnson@healthcare.com",
+  "password": "SecurePass123!",
+  "phone": "+1-555-0123",
+  "address": "123 Medical Center Drive",
+  "city": "New York",
+  "state": "New York",
+  "pincode": 10001,
+  "country": "United States"
+}
+
