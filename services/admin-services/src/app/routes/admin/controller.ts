@@ -123,7 +123,7 @@ class Controller {
   public async getPatientById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const patient = await this.validatePatientExists(id);
+      const patient = await this.validatePatientExists(id!);
 
       const patientData = await Patient.findById(id)
         .select("-password")
@@ -157,7 +157,7 @@ class Controller {
   public async updatePatient(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      await this.validatePatientExists(id);
+      await this.validatePatientExists(id!);
       const updateData = req.body;
 
       // Remove fields that shouldn't be updated directly
@@ -299,7 +299,7 @@ class Controller {
   public async addMedicalCondition(req: Request, res: Response): Promise<void> {
     try {
       const { patientId } = req.params;
-      await this.validatePatientExists(patientId);
+      await this.validatePatientExists(patientId!);
       const { category, label, value } = req.body;
 
       if (!category || !label || !value) {
@@ -349,7 +349,7 @@ class Controller {
   ): Promise<void> {
     try {
       const { patientId } = req.params;
-      await this.validatePatientExists(patientId);
+      await this.validatePatientExists(patientId!);
 
       const conditions = await PatientMedicalConditions.find({
         patientId: new Types.ObjectId(patientId),
@@ -387,10 +387,10 @@ class Controller {
   ): Promise<void> {
     try {
       const { patientId, id } = req.params;
-      await this.validatePatientExists(patientId);
+      await this.validatePatientExists(patientId!);
       const updateData = req.body;
 
-      if (!Types.ObjectId.isValid(id)) {
+      if (!Types.ObjectId.isValid(id!)) {
         throw new ErrorResponse({
           statusCode: 400,
           success: false,
@@ -451,9 +451,9 @@ class Controller {
   ): Promise<void> {
     try {
       const { patientId, id } = req.params;
-      await this.validatePatientExists(patientId);
+      await this.validatePatientExists(patientId!);
 
-      if (!Types.ObjectId.isValid(id)) {
+      if (!Types.ObjectId.isValid(id!)) {
         throw new ErrorResponse({
           statusCode: 400,
           success: false,
@@ -503,7 +503,7 @@ class Controller {
     try {
       const providerId = this.getProviderId(req);
       const { patientId } = req.params;
-      await this.validatePatientExists(patientId);
+      await this.validatePatientExists(patientId!);
       const { category, value } = req.body;
 
       if (!category || !value || !Array.isArray(value) || value.length === 0) {
@@ -565,7 +565,7 @@ class Controller {
   public async getPatientGoals(req: Request, res: Response): Promise<void> {
     try {
       const { patientId } = req.params;
-      await this.validatePatientExists(patientId);
+      await this.validatePatientExists(patientId!);
 
       const goals = await UserGoals.find({
         patientId: new Types.ObjectId(patientId),
@@ -601,10 +601,10 @@ class Controller {
   public async updateUserGoal(req: Request, res: Response): Promise<void> {
     try {
       const { patientId, id } = req.params;
-      await this.validatePatientExists(patientId);
+      await this.validatePatientExists(patientId!);
       const updateData = req.body;
 
-      if (!Types.ObjectId.isValid(id)) {
+      if (!Types.ObjectId.isValid(id!)) {
         throw new ErrorResponse({
           statusCode: 400,
           success: false,
@@ -678,9 +678,9 @@ class Controller {
   public async deleteUserGoal(req: Request, res: Response): Promise<void> {
     try {
       const { patientId, id } = req.params;
-      await this.validatePatientExists(patientId);
+      await this.validatePatientExists(patientId!);
 
-      if (!Types.ObjectId.isValid(id)) {
+      if (!Types.ObjectId.isValid(id!)) {
         throw new ErrorResponse({
           statusCode: 400,
           success: false,
