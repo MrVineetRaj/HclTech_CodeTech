@@ -83,9 +83,9 @@ const patientSchema = new Schema<IPatient>(
 );
 
 // Create indexes for better query performance
-patientSchema.index({ email: 1 });
+// Note: email already has unique: true which creates an index
+// Note: healthProviderId already has index: true
 patientSchema.index({ phone: 1 });
-patientSchema.index({ healthProviderId: 1 });
 
 // Export the model
 export const Patient = model<IPatient>("Patient", patientSchema);

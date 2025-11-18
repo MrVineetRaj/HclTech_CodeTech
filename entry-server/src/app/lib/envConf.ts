@@ -20,6 +20,7 @@ const envSchema = z.object({
   SESSION_SECRET: z.string().min(1, "SESSION_SECRET is required"),
   JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
   JWT_EXPIRES_IN: z.string().default("7d"),
+  PATIENT_SERVICE_URL: z.string().default("http://localhost:8082"),
   REDIS_HOST: z.string().min(1, "REDIS_HOST is required"),
   REDIS_PORT: z.string().min(1, "REDIS_PORT is required"),
 });
