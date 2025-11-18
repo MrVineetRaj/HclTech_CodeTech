@@ -8,6 +8,10 @@ A medication management platform connecting doctors with patients through medica
 - **Doctor/Assistant Portal** - Manage patients, medications, goals, and diet plans
 - **Patient Portal** - Track medications, goals, diet, view health blogs, and receive AI call reminders
 
+## Database Design
+<img width="1823" height="1162" alt="image" src="https://github.com/user-attachments/assets/fe3089b5-4128-4892-aa18-a37e721212c2" />
+
+
 ## ✨ Features
 
 ### Doctor/Assistant Portal
