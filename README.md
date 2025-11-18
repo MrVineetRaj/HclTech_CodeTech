@@ -1,157 +1,414 @@
 # 🏥 MediTech Platform
 
-A medication management platform connecting doctors with patients through medication tracking, goal monitoring, and AI-powered voice reminders.
+A comprehensive healthcare management platform connecting healthcare providers with patients through medication tracking, goal monitoring, and AI-powered voice reminders.
 
 ## 📋 Overview
 
 **Two Portals:**
 
-- **Doctor/Assistant Portal** - Manage patients, medications, goals, and diet plans
-- **Patient Portal** - Track medications, goals, diet, view health blogs, and receive AI call reminders
+- **Provider Portal** - Manage patients, medications, medical conditions, goals, and AI-powered reminders
+- **Patient Portal** - Track medications, goals, medical conditions, view health data, and receive AI call reminders
 
-## High Level
+## 🏗️ Architecture
 
 ![Architecture](./architecture.png)
 
-## Database Design
+**Microservices Architecture:**
 
-![Architecture](./db-schema.png)
+- **Entry Server** (Port 8080) - API Gateway with authentication & routing
+- **Admin Services** (Port 8083) - Provider/admin operations
+- **Patient Services** (Port 8082) - Patient-specific operations
+- **Workers** (Port 8084) - Background jobs & AI voice call integration
+- **Frontend** (Port 8080) - React.js SPA
+
+## 🗄️ Database Design
+
+![Database Schema](./db-schema.png)
 
 ## ✨ Features
 
-### Doctor/Assistant Portal
+### Provider Portal
 
-- Add patient details
-- Assign medications with schedules
-- Set daily health goals
-- Create diet plans
-- Send invitation links to patients
+- 👥 Manage patient profiles
+- 💊 Assign medications with schedules
+- 🏥 Add and track medical conditions
+- 🎯 Set personalized health goals
+- 📞 Trigger AI voice call reminders
+- 📊 View patient statistics and compliance
 
 ### Patient Portal
 
-- View medication schedule
-- Track and update goal status
-- Access personalized diet plan
-- Read health blogs and news
-- Receive AI voice call reminders for medication
+- 📱 View medication schedule
+- ✅ Track and update goal status
+- 🏥 View medical conditions
+- 👤 Manage profile information
+- 📞 Receive AI voice call reminders
+- 📊 View health metrics
 
-### AI Voice Agent
+### AI Voice Agent (VAPI Integration)
 
-- Automated phone calls for medication reminders
-- Ask patients about medication adherence
-- Track compliance
-- Remind patients about missed doses
+- 📞 Automated phone calls for medication reminders
+- 🗣️ Natural conversation with patients
+- ✅ Track medication adherence
+- 📊 Compliance monitoring
+- 🔔 Scheduled and on-demand reminders
 
-## 🛠️ Tech Stack (MERN)
+## 🛠️ Tech Stack
 
-- **Frontend**: React.js
-- **Backend**: Node.js + Express.js
-- **Database**: MongoDB
-- **Authentication**: JWT
-- **AI Voice**: Twilio Voice API
+### Frontend
 
-## 🚀 Installation
+- **React.js** 19+ with React Router 7
+- **TypeScript** for type safety
+- **Tailwind CSS** for styling
+- **Axios** for API calls
+
+### Backend
+
+- **Node.js** + **Express.js** (Microservices)
+- **TypeScript** throughout
+- **MongoDB** with Mongoose ODM
+- **Redis** for caching & sessions
+- **BullMQ** for job queues
+- **JWT** & **Passport.js** for authentication
+- **Winston** for logging
+
+### DevOps
+
+- **Docker** & \*_Docker Compose_
+- **Loki** for log aggregation
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js (v14+)
-- MongoDB
-- npm or yarn
+- **Node.js** v18+ and npm/pnpm
+- **MongoDB** 6.0+ (local or cloud)
+- **Redis** 7.0+
 
-### Setup
+### 📦 Installation
 
 1. **Clone the repository**
 
-   ```bash
-   git clone https://github.com/yourusername/MediTech-platform.git
-   cd MediTech-platform
-   ```
+```bash
+git clone https://github.com/yourusername/HclTech_CodeTech.git
+cd HclTech_CodeTech
+```
 
-2. **Backend Setup**
+2. **Install Dependencies**
 
-   ```bash
-   cd backend
-   npm install
-   ```
+```bash
+# Entry Server
+cd entry-server
+npm install
 
-   Create `.env` file:
+# Admin Services
+cd ../services/admin-services
+npm install
 
-   ```env
-   MONGODB_URI=mongodb://localhost:27017/MediTech
-   JWT_SECRET=your_secret_key
-   PORT=5000
-   TWILIO_ACCOUNT_SID=your_twilio_sid
-   TWILIO_AUTH_TOKEN=your_twilio_token
-   TWILIO_PHONE_NUMBER=your_phone_number
-   ```
+# Patient Services
+cd ../patient-services
+npm install
 
-3. **Frontend Setup**
+# Workers
+cd ../../workers
+npm install
 
-   ```bash
-   cd frontend
-   npm install
-   ```
+# Frontend
+cd ../Frontend
+npm install
+```
 
-   Create `.env` file:
+### ⚙️ Environment Configuration
 
-   ```env
-   REACT_APP_API_URL=http://localhost:5000
-   ```
+Create `.env` files in each service directory:
 
-4. **Run the Application**
+#### 1. Entry Server (`entry-server/.env`)
 
-   ```bash
-   # Terminal 1 - Backend
-   cd backend
-   npm start
+```env
+# Server Configuration
+PORT=8080
+NODE_ENV=development
+BASE_URL=http://localhost:8080
+PRIVATE_IP=127.0.0.1
 
-   # Terminal 2 - Frontend
-   cd frontend
-   npm start
-   ```
+# Frontend
+FRONTEND_URL=http://localhost:8080
+VALID_ORIGINS=http://localhost:8080,http://localhost:5173
 
-5. **Access**
-   - Frontend: http://localhost:3000
-   - Backend: http://localhost:5000
+# Database
+DATABASE_URL=mongodb://localhost:27017/meditech
+
+# Authentication
+SESSION_SECRET=your-super-secret-session-key-change-this
+JWT_SECRET=your-jwt-secret-key-change-this
+JWT_EXPIRES_IN=7d
+ENCRYPTION_KEY=your-32-char-encryption-key-here
+
+# Microservices URLs
+PATIENT_SERVICE_URL=http://localhost:8082
+ADMIN_SERVICE_URL=http://localhost:8083
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+```
+
+#### 2. Admin Services (`services/admin-services/.env`)
+
+```env
+# Server Configuration
+PORT=8083
+NODE_ENV=development
+BASE_URL=http://localhost:8083
+PRIVATE_IP=127.0.0.1
+
+# Frontend
+FRONTEND_URL=http://localhost:8080
+VALID_ORIGINS=http://localhost:8080
+
+# Database
+DATABASE_URL=mongodb://localhost:27017/meditech
+
+# Authentication
+SESSION_SECRET=your-super-secret-session-key-change-this
+HASH_KEY=your-hash-key-for-passwords
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+```
+
+#### 3. Patient Services (`services/patient-services/.env`)
+
+```env
+# Server Configuration
+PORT=8082
+NODE_ENV=development
+BASE_URL=http://localhost:8082
+PRIVATE_IP=127.0.0.1
+
+# Database
+DATABASE_URL=mongodb://localhost:27017/meditech
+
+# Authentication
+SESSION_SECRET=your-super-secret-session-key-change-this
+HASH_KEY=your-hash-key-for-passwords
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+```
+
+#### 4. Workers (`workers/.env`)
+
+```env
+# Server Configuration
+PORT=8084
+NODE_ENV=development
+BASE_URL=http://localhost:8084
+PRIVATE_IP=127.0.0.1
+
+# Database
+DATABASE_URL=mongodb://localhost:27017/meditech
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# VAPI Configuration (AI Voice Calls)
+VAPI_API_KEY=your-vapi-api-key-here
+VAPI_PHONE_NUMBER_ID=your-vapi-phone-number-id
+HASH_KEY=your-hash-key-here
+```
+
+### 🎬 Running the Application
+
+**Option 1: Development Mode (Recommended)**
+
+Open **5 separate terminals** and run each service:
+
+```bash
+# Terminal 1 - Entry Server (API Gateway)
+cd entry-server
+npm run dev
+# ✅ Running on http://localhost:8080
+
+# Terminal 2 - Admin Services
+cd services/admin-services
+npm run dev
+# ✅ Running on http://localhost:8083
+
+# Terminal 3 - Patient Services
+cd services/patient-services
+npm run dev
+# ✅ Running on http://localhost:8082
+
+# Terminal 4 - Workers (Background Jobs)
+cd workers
+npm run dev
+# ✅ Running on http://localhost:8084
+
+# Terminal 5 - Frontend
+cd Frontend
+npm run dev
+# ✅ Running on http://localhost:8080 (served by entry-server)
+```
+
+**Option 2: Docker Compose (Production)**
+
+```bash
+# Build and run all services
+docker-compose up --build
+
+# Run in detached mode
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
+```
+
+### 🔍 Verify Services
+
+Check if all services are running:
+
+```bash
+# Windows PowerShell
+netstat -ano | findstr "8080 8082 8083 8084"
+
+# Linux/Mac
+netstat -tulpn | grep -E "8080|8082|8083|8084"
+```
+
+Expected output:
+
+- Port **8080** - Entry Server & Frontend
+- Port **8082** - Patient Services
+- Port **8083** - Admin Services
+- Port **8084** - Workers
+
+### 🌐 Access the Application
+
+- **Frontend**: http://localhost:8080
+- **API Gateway**: http://localhost:8080/api/v1
+- **Health Check**: http://localhost:8080/api/v1/health
 
 ## 📁 Project Structure
 
 ```
-MediTech-platform/
-├── backend/
-│   ├── models/          # MongoDB models
-│   ├── routes/          # API routes
-│   ├── controllers/     # Route controllers
-│   ├── middleware/      # Auth & validation
-│   ├── config/          # Database config
-│   └── server.js        # Entry point
+HclTech_CodeTech/
+├── entry-server/              # API Gateway (Port 8080)
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── routes/       # Auth & proxy routes
+│   │   │   ├── middlewares/  # Auth guards
+│   │   │   ├── lib/          # Utilities, JWT, DB
+│   │   │   └── models/       # Mongoose models
+│   │   └── server.ts         # Entry point
+│   └── package.json
 │
-├── frontend/
+├── services/
+│   ├── admin-services/       # Provider Portal Backend (Port 8083)
+│   │   ├── src/
+│   │   │   ├── app/
+│   │   │   │   ├── routes/
+│   │   │   │   │   └── admin/  # Patient management, conditions, goals
+│   │   │   │   ├── models/     # Patient, Provider, Conditions
+│   │   │   │   └── lib/
+│   │   │   └── server.ts
+│   │   └── package.json
+│   │
+│   └── patient-services/     # Patient Portal Backend (Port 8082)
+│       ├── src/
+│       │   ├── app/
+│       │   │   ├── routes/
+│       │   │   │   └── patient/  # Goals, medications, tracking
+│       │   │   ├── models/
+│       │   │   └── lib/
+│       │   └── server.ts
+│       └── package.json
+│
+├── workers/                  # Background Jobs (Port 8084)
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── notification-worker.ts  # BullMQ worker
+│   │   │   └── services/
+│   │   │       └── vapi.service.ts     # VAPI integration
+│   │   └── server.ts
+│   └── package.json
+│
+├── Frontend/                 # React.js Frontend
+│   ├── app/
+│   │   ├── routes/           # Patient & Provider pages
+│   │   │   ├── patient.*     # Patient portal routes
+│   │   │   ├── provider.*    # Provider portal routes
+│   │   │   └── login.tsx
+│   │   └── lib/              # API clients, auth helpers
 │   ├── public/
-│   └── src/
-│       ├── components/  # React components
-│       ├── pages/       # Page components
-│       ├── services/    # API calls
-│       ├── context/     # Context API
-│       └── App.js       # Main app
+│   └── package.json
+│
+├── docker-compose.yml        # Multi-container setup
+└── README.md                 # This file
 ```
 
-## 📱 Usage
+## 🧪 Testing API Endpoints
 
-### For Doctors/Assistants:
+### Patient Routes
 
-1. Login to doctor portal
-2. Add patient details
-3. Add medications with schedule
-4. Set daily goals
-5. Create diet plan
-6. Send invitation to patient
+```bash
+# Get patient profile
+curl http://localhost:8080/api/v1/patient/profile
+
+# Get medications
+curl http://localhost:8080/api/v1/patient/medications
+
+# Get goals
+curl http://localhost:8080/api/v1/patient/goals
+```
+
+### Admin Routes
+
+```bash
+# Get all patients (provider)
+curl http://localhost:8080/api/v1/admin/patients?providerId=YOUR_PROVIDER_ID
+
+# Add medical condition
+curl -X POST http://localhost:8080/api/v1/admin/patients/PATIENT_ID/medical-conditions \
+  -H "Content-Type: application/json" \
+  -d '{"condition":"Diabetes","diagnosedDate":"2024-01-01"}'
+
+# Send AI reminder call
+curl -X POST http://localhost:8080/api/v1/admin/send-reminder \
+  -H "Content-Type: application/json" \
+  -d '{"patientId":"PATIENT_ID","type":"medication","message":"Time to take your medicine"}'
+```
+
+## 📱 Usage Guide
+
+### For Healthcare Providers:
+
+1. **Login** to provider portal at `/login` (select Provider)
+2. **Dashboard** - View all patients and statistics
+3. **Patient Details** - Click on a patient to:
+   - View complete profile
+   - Add/edit medical conditions
+   - Assign health goals
+   - Trigger AI voice call reminders
+4. **Invite Patients** - Send invitation links to new patients
 
 ### For Patients:
 
-1. Click invitation link
-2. Complete registration
-3. View medications and goals
-4. Mark goals as completed
-5. Receive AI reminder calls
-6. Read health blogs
+1. **Register/Login** at `/login` (select Patient)
+2. **Dashboard** - Overview of medications and goals
+3. **Medications** - View medication schedule
+4. **Medical Conditions** - Track health conditions
+5. **Goals** - View and update health goals
+6. **Profile** - Update personal information
+
+## 👥 Team
+
+Vineet Raj
+Anurag Singh
+Mohit Bharti
