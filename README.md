@@ -1,4 +1,4 @@
-# 🏥 MediCare Platform
+# 🏥 MediTech Platform
 
 A medication management platform connecting doctors with patients through medication tracking, goal monitoring, and AI-powered voice reminders.
 
@@ -54,7 +54,7 @@ A medication management platform connecting doctors with patients through medica
 1. **Clone the repository**
    ```bash
    git clone https://github.com/yourusername/medicare-platform.git
-   cd medicare-platform
+   cd MediTech-platform
    ```
 
 2. **Backend Setup**
