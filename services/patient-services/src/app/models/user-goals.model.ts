@@ -22,13 +22,11 @@ const userGoalsSchema = new Schema<IUserGoals>(
       type: Schema.Types.ObjectId,
       ref: "HealthProvider",
       required: [true, "Health Provider ID is required"],
-      index: true,
     },
     patientId: {
       type: Schema.Types.ObjectId,
       ref: "Patient",
       required: [true, "Patient ID is required"],
-      index: true,
     },
     category: {
       type: String,

@@ -1,70 +1,88 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  getUserGoals,
+  getPendingGoals,
+  getCompletedGoals,
+  updateGoalTracking,
+} from "../lib/patientApi";
+import type { IUserGoals, IGoalTracking } from "../lib/types";
 
 export default function Goals() {
   const [selectedTab, setSelectedTab] = useState<"pending" | "completed">("pending");
+  const [allGoals, setAllGoals] = useState<IUserGoals[]>([]);
+  const [pendingGoals, setPendingGoals] = useState<IGoalTracking[]>([]);
+  const [completedGoals, setCompletedGoals] = useState<IGoalTracking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>("");
 
-  // Sample goals data
-  const pendingGoals = [
-    {
-      id: "1",
-      title: "Daily Exercise",
-      target: "Walk 30 minutes daily",
-      progress: 60,
-      dueDate: "2024-12-31",
-      category: "fitness",
-      assignedBy: "Dr. Smith",
-    },
-    {
-      id: "2",
-      title: "Blood Sugar Monitoring",
-      target: "Check blood sugar twice daily",
-      progress: 85,
-      dueDate: "2024-12-31",
-      category: "health",
-      assignedBy: "Dr. Johnson",
-    },
-    {
-      id: "3",
-      title: "Weight Management",
-      target: "Lose 5 kg in 3 months",
-      progress: 40,
-      dueDate: "2024-12-15",
-      category: "fitness",
-      assignedBy: "Dr. Smith",
-    },
-  ];
+  useEffect(() => {
+    fetchGoalsData();
+  }, []);
 
-  const completedGoals = [
-    {
-      id: "4",
-      title: "Initial Blood Work",
-      target: "Complete comprehensive blood tests",
-      completedDate: "2024-11-01",
-      category: "health",
-      assignedBy: "Dr. Johnson",
-    },
-    {
-      id: "5",
-      title: "Medication Schedule Setup",
-      target: "Establish daily medication routine",
-      completedDate: "2024-10-15",
-      category: "medication",
-      assignedBy: "Dr. Smith",
-    },
-  ];
+  const fetchGoalsData = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const [goals, pending, completed] = await Promise.all([
+        getUserGoals(),
+        getPendingGoals(),
+        getCompletedGoals(),
+      ]);
+
+      setAllGoals(goals);
+      setPendingGoals(pending);
+      setCompletedGoals(completed);
+    } catch (err) {
+      console.error("Error fetching goals:", err);
+      setError(err instanceof Error ? err.message : "Failed to load goals");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCompleteGoal = async (goalId: string) => {
+    try {
+      await updateGoalTracking(goalId, { completed: true });
+      // Refresh data
+      await fetchGoalsData();
+      alert("Goal marked as complete!");
+    } catch (err) {
+      console.error("Error completing goal:", err);
+      alert("Failed to mark goal complete");
+    }
+  };
 
   const getCategoryColor = (category: string) => {
-    switch (category) {
+    switch (category.toLowerCase()) {
       case "fitness":
+      case "exercise":
         return "bg-purple-100 text-purple-700";
       case "health":
+      case "wellness":
         return "bg-blue-100 text-blue-700";
       case "medication":
         return "bg-green-100 text-green-700";
+      case "nutrition":
+      case "diet":
+        return "bg-orange-100 text-orange-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  const totalGoals = allGoals.length;
+  const successRate = totalGoals > 0 
+    ? Math.round((completedGoals.length / (completedGoals.length + pendingGoals.length)) * 100) 
+    : 0;
 
   return (
     <div className="space-y-6">
@@ -74,10 +92,14 @@ export default function Goals() {
           <h1 className="text-3xl font-bold text-gray-900">Health Goals</h1>
           <p className="text-gray-600 mt-1">Track your progress and achieve your health objectives</p>
         </div>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium">
-          + Add Goal
-        </button>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          {error}
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -109,7 +131,7 @@ export default function Goals() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Success Rate</p>
-              <p className="text-3xl font-bold text-blue-600 mt-2">78%</p>
+              <p className="text-3xl font-bold text-blue-600 mt-2">{successRate}%</p>
             </div>
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <span className="text-2xl">📈</span>
@@ -148,84 +170,131 @@ export default function Goals() {
         {/* Pending Goals */}
         {selectedTab === "pending" && (
           <div className="divide-y">
-            {pendingGoals.map((goal) => (
-              <div key={goal.id} className="p-6 hover:bg-gray-50 transition">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span className="text-2xl">🎯</span>
-                      </div>
+            {pendingGoals.length > 0 ? (
+              pendingGoals.map((goal) => {
+                const goalData = goal.goalID as any;
+                return (
+                  <div key={goal._id} className="p-6 hover:bg-gray-50 transition">
+                    <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900">{goal.title}</h3>
-                            <p className="text-sm text-gray-600 mt-1">{goal.target}</p>
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span className="text-2xl">🎯</span>
                           </div>
-                          <span className={`px-3 py-1 text-xs font-medium rounded-full ${getCategoryColor(goal.category)}`}>
-                            {goal.category}
-                          </span>
-                        </div>
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                  {goalData?.category ? `${goalData.category.charAt(0).toUpperCase() + goalData.category.slice(1)} Goal` : 'Health Goal'}
+                                </h3>
+                                <p className="text-sm text-gray-600 mt-1">
+                                  Target: {goal.target || goalData?.target || 'Not specified'}
+                                </p>
+                              </div>
+                              {goalData?.category && (
+                                <span className={`px-3 py-1 text-xs font-medium rounded-full ${getCategoryColor(goalData.category)}`}>
+                                  {goalData.category}
+                                </span>
+                              )}
+                            </div>
 
-                        {/* Progress Bar */}
-                        <div className="mt-4">
-                          <div className="flex items-center justify-between text-sm mb-2">
-                            <span className="text-gray-600">Progress</span>
-                            <span className="font-medium text-gray-900">{goal.progress}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div
-                              className="bg-blue-600 h-2 rounded-full transition-all"
-                              style={{ width: `${goal.progress}%` }}
-                            ></div>
-                          </div>
-                        </div>
+                            {/* Goal Details */}
+                            {goalData?.value && Array.isArray(goalData.value) && (
+                              <div className="mt-3 space-y-1">
+                                {goalData.value.map((item: string, idx: number) => (
+                                  <div key={idx} className="flex items-center gap-2 text-sm text-gray-700">
+                                    <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+                                    <span>{item}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
 
-                        <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
-                          <span>Assigned by {goal.assignedBy}</span>
-                          <span>•</span>
-                          <span>Due {new Date(goal.dueDate).toLocaleDateString()}</span>
+                            <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                              {goal.healthProviderId && (
+                                <>
+                                  <span>Assigned by {typeof goal.healthProviderId === 'object' ? (goal.healthProviderId as any).name : 'Provider'}</span>
+                                  <span>•</span>
+                                </>
+                              )}
+                              <span>Created {new Date(goal.createdAt).toLocaleDateString()}</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
+                      <button
+                        onClick={() => handleCompleteGoal(goal._id)}
+                        className="ml-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-medium"
+                      >
+                        Mark Complete
+                      </button>
                     </div>
                   </div>
-                  <button className="ml-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-medium">
-                    Mark Complete
-                  </button>
-                </div>
+                );
+              })
+            ) : (
+              <div className="p-12 text-center">
+                <div className="text-6xl mb-4">🎯</div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No Pending Goals</h3>
+                <p className="text-gray-600">
+                  Great job! You have no pending goals at the moment.
+                </p>
               </div>
-            ))}
+            )}
           </div>
         )}
 
         {/* Completed Goals */}
         {selectedTab === "completed" && (
           <div className="divide-y">
-            {completedGoals.map((goal) => (
-              <div key={goal.id} className="p-6 hover:bg-gray-50 transition">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="text-2xl">✅</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{goal.title}</h3>
-                        <p className="text-sm text-gray-600 mt-1">{goal.target}</p>
+            {completedGoals.length > 0 ? (
+              completedGoals.map((goal) => {
+                const goalData = goal.goalID as any;
+                return (
+                  <div key={goal._id} className="p-6 hover:bg-gray-50 transition">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-2xl">✅</span>
                       </div>
-                      <span className={`px-3 py-1 text-xs font-medium rounded-full ${getCategoryColor(goal.category)}`}>
-                        {goal.category}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
-                      <span>Assigned by {goal.assignedBy}</span>
-                      <span>•</span>
-                      <span>Completed {new Date(goal.completedDate).toLocaleDateString()}</span>
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              {goalData?.category ? `${goalData.category.charAt(0).toUpperCase() + goalData.category.slice(1)} Goal` : 'Health Goal'}
+                            </h3>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Target: {goal.target || goalData?.target || 'Completed'}
+                            </p>
+                          </div>
+                          {goalData?.category && (
+                            <span className={`px-3 py-1 text-xs font-medium rounded-full ${getCategoryColor(goalData.category)}`}>
+                              {goalData.category}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                          {goal.healthProviderId && (
+                            <>
+                              <span>Assigned by {typeof goal.healthProviderId === 'object' ? (goal.healthProviderId as any).name : 'Provider'}</span>
+                              <span>•</span>
+                            </>
+                          )}
+                          <span>Completed {new Date(goal.updatedAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                );
+              })
+            ) : (
+              <div className="p-12 text-center">
+                <div className="text-6xl mb-4">📝</div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No Completed Goals Yet</h3>
+                <p className="text-gray-600">
+                  Complete your first goal to see it here!
+                </p>
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>
@@ -245,4 +314,3 @@ export default function Goals() {
     </div>
   );
 }
-

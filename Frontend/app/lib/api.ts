@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance, type AxiosError } from "axios";
 
 // API Base URL from environment variable
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Axios instance configured for the backend API
@@ -86,4 +86,3 @@ export function handleApiError(error: any): string {
 }
 
 export default apiClient;
-

@@ -23,13 +23,11 @@ const goalTrackingSchema = new Schema<IGoalTracking>(
       type: Schema.Types.ObjectId,
       ref: "Patient",
       required: [true, "User ID (Patient ID) is required"],
-      index: true,
     },
     healthProviderId: {
       type: Schema.Types.ObjectId,
       ref: "HealthProvider",
       required: [true, "Health Provider ID is required"],
-      index: true,
     },
     target: {
       type: String,
@@ -45,7 +43,6 @@ const goalTrackingSchema = new Schema<IGoalTracking>(
       type: Schema.Types.ObjectId,
       ref: "UserGoals",
       required: [true, "Goal ID is required"],
-      index: true,
     },
   },
   {

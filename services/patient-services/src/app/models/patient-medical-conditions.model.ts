@@ -39,7 +39,6 @@ const patientMedicalConditionsSchema = new Schema<IPatientMedicalConditions>(
       type: Schema.Types.ObjectId,
       ref: "Patient",
       required: [true, "Patient ID is required"],
-      index: true,
     },
     label: {
       type: String,

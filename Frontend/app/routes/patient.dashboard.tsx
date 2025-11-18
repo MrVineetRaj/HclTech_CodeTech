@@ -6,14 +6,20 @@ import {
   getCompletedGoals,
   getMedicalConditions,
 } from "../lib/patientApi";
-import type { IUserGoals, IGoalTracking, IMedicalCondition } from "../lib/types";
+import type {
+  IUserGoals,
+  IGoalTracking,
+  IMedicalCondition,
+} from "../lib/types";
 
 export default function PatientDashboard() {
   const [user, setUser] = useState<any>(null);
   const [medicationGoals, setMedicationGoals] = useState<IUserGoals[]>([]);
   const [pendingGoals, setPendingGoals] = useState<IGoalTracking[]>([]);
   const [completedGoals, setCompletedGoals] = useState<IGoalTracking[]>([]);
-  const [medicalConditions, setMedicalConditions] = useState<IMedicalCondition[]>([]);
+  const [medicalConditions, setMedicalConditions] = useState<
+    IMedicalCondition[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -21,7 +27,7 @@ export default function PatientDashboard() {
     // Get user from localStorage
     const currentUser = getCurrentUser();
     setUser(currentUser);
-    
+
     // Fetch data from backend
     fetchDashboardData();
   }, []);
@@ -31,21 +37,33 @@ export default function PatientDashboard() {
       setLoading(true);
       setError("");
 
-      // Fetch all data in parallel
-      const [medGoals, pending, completed, conditions] = await Promise.all([
-        getUserGoals("medication"),
-        getPendingGoals(),
-        getCompletedGoals(),
-        getMedicalConditions(),
+      // Fetch all data in parallel, but handle 404s gracefully
+      const results = await Promise.allSettled([
+        getUserGoals("medication").catch(() => []),
+        getPendingGoals().catch(() => []),
+        getCompletedGoals().catch(() => []),
+        getMedicalConditions().catch(() => []),
       ]);
 
-      setMedicationGoals(medGoals);
-      setPendingGoals(pending);
-      setCompletedGoals(completed);
-      setMedicalConditions(conditions);
+      // Extract data from results, defaulting to empty arrays on failure
+      const medGoals =
+        results[0].status === "fulfilled" ? results[0].value : [];
+      const pending = results[1].status === "fulfilled" ? results[1].value : [];
+      const completed =
+        results[2].status === "fulfilled" ? results[2].value : [];
+      const conditions =
+        results[3].status === "fulfilled" ? results[3].value : [];
+
+      setMedicationGoals(Array.isArray(medGoals) ? medGoals : []);
+      setPendingGoals(Array.isArray(pending) ? pending : []);
+      setCompletedGoals(Array.isArray(completed) ? completed : []);
+      setMedicalConditions(Array.isArray(conditions) ? conditions : []);
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
-      setError(err instanceof Error ? err.message : "Failed to load dashboard data");
+      // Don't show error if it's just 404 (service not running)
+      if (err instanceof Error && !err.message.includes("404")) {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -81,9 +99,14 @@ export default function PatientDashboard() {
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Active Medications</p>
+              <p className="text-sm font-medium text-gray-600">
+                Active Medications
+              </p>
               <p className="text-3xl font-bold text-gray-900 mt-2">
-                {medicationGoals.reduce((sum, goal) => sum + goal.value.length, 0)}
+                {medicationGoals.reduce(
+                  (sum, goal) => sum + goal.value.length,
+                  0
+                )}
               </p>
             </div>
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -96,7 +119,9 @@ export default function PatientDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Pending Goals</p>
-              <p className="text-3xl font-bold text-yellow-600 mt-2">{pendingGoals.length}</p>
+              <p className="text-3xl font-bold text-yellow-600 mt-2">
+                {pendingGoals.length}
+              </p>
             </div>
             <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
               <span className="text-2xl">📋</span>
@@ -105,4 +130,140 @@ export default function PatientDashboard() {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-sm border">
-          <div class
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">
+                Completed Goals
+              </p>
+              <p className="text-3xl font-bold text-green-600 mt-2">
+                {completedGoals.length}
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <span className="text-2xl">✅</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Medications Section */}
+      {medicationGoals.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm border">
+          <div className="px-6 py-4 border-b">
+            <h2 className="text-2xl font-semibold text-gray-900">
+              Your Medications
+            </h2>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {medicationGoals.map((goal) => (
+                <div
+                  key={goal._id}
+                  className="p-4 border rounded-lg hover:border-blue-300 transition"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="text-xl">💊</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 mb-2">
+                        {goal.category.charAt(0).toUpperCase() +
+                          goal.category.slice(1)}
+                      </p>
+                      <ul className="space-y-1">
+                        {goal.value.map((medication, idx) => (
+                          <li key={idx} className="text-sm text-gray-600">
+                            • {medication}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pending Goals */}
+      {pendingGoals.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm border">
+          <div className="px-6 py-4 border-b">
+            <h2 className="text-2xl font-semibold text-gray-900">
+              Pending Health Goals
+            </h2>
+          </div>
+          <div className="p-6">
+            <div className="space-y-3">
+              {pendingGoals.slice(0, 5).map((goal) => (
+                <div
+                  key={goal._id}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                      <span className="text-xl">🎯</span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        Goal #{goal._id.slice(-6)}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Target: {goal.target}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Medical Conditions */}
+      {medicalConditions.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm border">
+          <div className="px-6 py-4 border-b">
+            <h2 className="text-2xl font-semibold text-gray-900">
+              Medical Conditions
+            </h2>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {medicalConditions.map((condition) => (
+                <div key={condition._id} className="p-4 bg-gray-50 rounded-lg">
+                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
+                    {condition.category}
+                  </p>
+                  <p className="font-medium text-gray-900">{condition.label}</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {condition.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading &&
+        medicationGoals.length === 0 &&
+        pendingGoals.length === 0 &&
+        medicalConditions.length === 0 &&
+        !error && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
+            <div className="text-6xl mb-4">📊</div>
+            <h3 className="text-xl font-semibold text-blue-900 mb-2">
+              No Data Available
+            </h3>
+            <p className="text-blue-700">
+              Your health data will appear here once your provider adds
+              medications, goals, or medical conditions.
+            </p>
+          </div>
+        )}
+    </div>
+  );
+}
