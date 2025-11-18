@@ -24,19 +24,19 @@ NODE_ENV=development
 BASE_URL=http://localhost:8080/
 VALID_ORIGINS=http://localhost:5173/;
 FRONTEND_URL=http://localhost:5173/
-ENCRYPTION_KEY=810bfa48c8bca47455ee4ffed947babd254a2c4553377c690546df42ef67c000
-HASH_KEY=810bfa48c8bca47455ee4ffed947babd254a2c4553377c690546df42ef67c000
+ENCRYPTION_KEY=your_encryption_key_here
+HASH_KEY=your_hash_key_here
 PRIVATE_IP=192.168.1.9
 
 # MongoDB Atlas - Add your connection string
 DATABASE_URL=mongodb+srv://username:password@cluster.mongodb.net/meditech?retryWrites=true&w=majority
 
-GOOGLE_CLIENT_ID=372506739478-lihsjmikoo2baj4568aio57cn5e9jpij.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=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
-GITHUB_CLIENT_ID=Ov23lialapKLGykNpoNd
-GITHUB_CLIENT_SECRET=37862c04629da91f78789a331d5426dbc5a41836
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
 
-SESSION_SECRET=3bc266b5a10c9a1f44625183c5c4d11b8b0ac22028c541d93491ccf1ca3a3c59
+SESSION_SECRET=your_session_secret_here
 
 REDIS_HOST=localhost
 REDIS_PORT=6379
@@ -53,7 +53,7 @@ LOKI_ENABLED=false
 PORT=3000
 NODE_ENV=development
 BASE_URL=http://localhost:3000
-HASH_KEY=810bfa48c8bca47455ee4ffed947babd254a2c4553377c690546df42ef67c000
+HASH_KEY=your_hash_key_here
 PRIVATE_IP=192.168.1.9
 
 # MongoDB Atlas - Same as patient service
@@ -63,8 +63,8 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 
 # VAPI Credentials
-VAPI_API_KEY=f89c1482-396b-4336-a4ab-17d14a3bfb70
-VAPI_PHONE_NUMBER_ID=f441fda6-85f8-4fbe-a7b9-783979f61a95
+VAPI_API_KEY=your_vapi_api_key
+VAPI_PHONE_NUMBER_ID=your_vapi_phone_number_id
 ```
 
 ### 3. Start Redis
