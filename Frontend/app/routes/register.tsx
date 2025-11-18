@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { registerPatient } from "../lib/auth";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -9,6 +10,11 @@ export default function Register() {
     phone: "",
     password: "",
     confirmPassword: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    country: "India",
     agreeToTerms: false,
   });
   const [errors, setErrors] = useState({
@@ -17,7 +23,12 @@ export default function Register() {
     phone: "",
     password: "",
     confirmPassword: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
     agreeToTerms: "",
+    general: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -110,31 +121,33 @@ export default function Register() {
     }
 
     setIsLoading(true);
+    setErrors({ ...errors, general: "" });
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('http://localhost:5000/api/auth/register', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     fullName: formData.fullName,
-      //     email: formData.email,
-      //     phone: formData.phone,
-      //     password: formData.password,
-      //   }),
-      // });
-      // const data = await response.json();
+      // Note: healthProviderId is hardcoded for now
+      // In production, this should come from an invitation link or selection
+      const { user, message } = await registerPatient({
+        healthProviderId: "000000000000000000000001", // Placeholder - should be dynamic
+        fullname: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        pincode: parseInt(formData.pincode) || 0,
+        country: formData.country,
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      console.log("Register data:", formData);
-
-      alert("Registration successful! Please login.");
+      console.log("Registration successful:", user);
+      alert(message + " Please login.");
       navigate("/login");
     } catch (error) {
       console.error("Registration error:", error);
-      alert("Registration failed. Please try again.");
+      setErrors({
+        ...errors,
+        general: error instanceof Error ? error.message : "Registration failed. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -154,6 +167,13 @@ export default function Register() {
 
         {/* Register Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* General Error Message */}
+          {errors.general && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              {errors.general}
+            </div>
+          )}
+
           {/* Full Name Field */}
           <div>
             <label
@@ -229,6 +249,110 @@ export default function Register() {
             />
             {errors.phone && (
               <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+            )}
+          </div>
+
+          {/* Address Field */}
+          <div>
+            <label
+              htmlFor="address"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Address
+            </label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition ${
+                errors.address
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-blue-500 focus:border-transparent"
+              }`}
+              placeholder="Enter your address"
+            />
+            {errors.address && (
+              <p className="mt-1 text-sm text-red-600">{errors.address}</p>
+            )}
+          </div>
+
+          {/* City, State Row */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                htmlFor="city"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                City
+              </label>
+              <input
+                type="text"
+                id="city"
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition ${
+                  errors.city
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-blue-500 focus:border-transparent"
+                }`}
+                placeholder="City"
+              />
+              {errors.city && (
+                <p className="mt-1 text-sm text-red-600">{errors.city}</p>
+              )}
+            </div>
+            <div>
+              <label
+                htmlFor="state"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                State
+              </label>
+              <input
+                type="text"
+                id="state"
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition ${
+                  errors.state
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-blue-500 focus:border-transparent"
+                }`}
+                placeholder="State"
+              />
+              {errors.state && (
+                <p className="mt-1 text-sm text-red-600">{errors.state}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Pincode Field */}
+          <div>
+            <label
+              htmlFor="pincode"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Pincode
+            </label>
+            <input
+              type="text"
+              id="pincode"
+              name="pincode"
+              value={formData.pincode}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition ${
+                errors.pincode
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-blue-500 focus:border-transparent"
+              }`}
+              placeholder="Enter pincode"
+            />
+            {errors.pincode && (
+              <p className="mt-1 text-sm text-red-600">{errors.pincode}</p>
             )}
           </div>
 

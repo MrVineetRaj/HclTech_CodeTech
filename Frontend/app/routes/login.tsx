@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { loginPatient } from "../lib/auth";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function Login() {
   const [errors, setErrors] = useState({
     email: "",
     password: "",
+    general: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -63,39 +65,24 @@ export default function Login() {
     }
 
     setIsLoading(true);
+    setErrors({ email: "", password: "", general: "" });
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('http://localhost:5000/api/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     email: formData.email,
-      //     password: formData.password,
-      //   }),
-      // });
-      // const data = await response.json();
+      const { user, message } = await loginPatient({
+        email: formData.email,
+        password: formData.password,
+      });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      console.log("Login successful:", user);
 
-      console.log("Login data:", formData);
-
-      // TODO: Store token in localStorage
-      // localStorage.setItem('token', data.token);
-      // localStorage.setItem('userType', data.userType);
-
-      // Navigate based on user type
-      // if (data.userType === 'doctor') {
-      //   navigate('/doctor/dashboard');
-      // } else {
-      //   navigate('/patient/dashboard');
-      // }
-
-      alert("Login successful! (Demo mode)");
+      // Navigate to patient dashboard
+      navigate("/patient/dashboard");
     } catch (error) {
       console.error("Login error:", error);
-      alert("Login failed. Please try again.");
+      setErrors({
+        ...errors,
+        general: error instanceof Error ? error.message : "Login failed. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -115,6 +102,13 @@ export default function Login() {
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* General Error Message */}
+          {errors.general && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              {errors.general}
+            </div>
+          )}
+
           {/* Email Field */}
           <div>
             <label
@@ -129,7 +123,7 @@ export default function Login() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition text-gray-900 ${
                 errors.email
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-blue-500 focus:border-transparent"
@@ -155,7 +149,7 @@ export default function Login() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition text-gray-900 ${
                 errors.password
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-blue-500 focus:border-transparent"
