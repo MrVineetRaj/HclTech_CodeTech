@@ -19,9 +19,18 @@ export async function proxyToPatientService(
   const httpMethod = method || req.method;
   const baseUrl = envConf.PATIENT_SERVICE_URL;
   
+  // Get patient ID from req.user (set by isPatient middleware)
+  const user = (req as any).user as { id: string; userType: string } | undefined;
+  const patientId = user?.id;
+
   // Build the full URL with query parameters
   const queryString = req.url.includes("?") ? req.url.substring(req.url.indexOf("?")) : "";
   const url = new URL(`${baseUrl}${targetPath}${queryString}`);
+  
+  // Add patientId to query params if available (patient-service uses this as fallback)
+  if (patientId) {
+    url.searchParams.set("patientId", patientId);
+  }
 
   try {
     // Prepare headers - forward important headers
@@ -51,8 +60,15 @@ export async function proxyToPatientService(
     };
 
     // Add body for POST, PUT, PATCH requests
-    if (["POST", "PUT", "PATCH"].includes(httpMethod) && req.body && Object.keys(req.body).length > 0) {
-      options.body = JSON.stringify(req.body);
+    let requestBody = req.body;
+    if (["POST", "PUT", "PATCH"].includes(httpMethod) && requestBody) {
+      // Add patientId to body if not already present (patient-service uses this as fallback)
+      if (patientId && typeof requestBody === "object" && !requestBody.patientId) {
+        requestBody = { ...requestBody, patientId };
+      }
+      if (Object.keys(requestBody).length > 0) {
+        options.body = JSON.stringify(requestBody);
+      }
     }
 
     // Make request to patient-service using fetch (Node.js 18+)
