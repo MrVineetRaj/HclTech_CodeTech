@@ -67,11 +67,9 @@ class AuthRepository {
   }
 
   async findPatientByIdWithProvider(id: string): Promise<IPatient | null> {
+     console.log({id})
     try {
-      return await Patient.findById(id).populate(
-        "healthProviderID",
-        "name email phone"
-      );
+      return await Patient.findById(id)
     } catch (error) {
       throw this.handleError(
         error,
