@@ -43,37 +43,43 @@ const serviceFilter = (service: Service) => {
   })();
 };
 
-const logger = winston.createLogger({
-  levels: customLevels.levels,
-  level: "debug",
-  // top-level format applies to all transports unless overridden
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
+// Base transports (always available)
+const baseTransports: winston.transport[] = [
+  new winston.transports.File({
+    filename: "logs/error.log",
+    level: "error",
+  }),
+  new winston.transports.File({
+    filename: "logs/user-service.log",
+    format: winston.format.combine(serviceFilter(Service.USER)),
+  }),
+  new winston.transports.File({
+    filename: "logs/system-service.log",
+    format: winston.format.combine(serviceFilter(Service.SYSTEM)),
+  }),
+  new winston.transports.File({ filename: "logs/combined.log" }),
+];
 
-  transports: [
-    new winston.transports.File({
-      filename: "logs/error.log",
-      level: "error",
-    }),
-    new winston.transports.File({
-      filename: "logs/user-service.log",
-      // The transport format only needs the filter. Timestamp and JSON are inherited.
-      format: winston.format.combine(serviceFilter(Service.USER)),
-    }),
+// Add Loki transport only if LOKI_ENABLED is true
+if (process.env.LOKI_ENABLED === "true") {
+  baseTransports.push(
     new LokiTransport({
       host: "http://127.0.0.1:3100",
       labels: { app: "databridge" },
       format: winston.format.json(),
-      onConnectionError: (err) => console.error("Loki error:", err),
-    }),
-    new winston.transports.File({
-      filename: "logs/system-service.log",
-      format: winston.format.combine(serviceFilter(Service.SYSTEM)),
-    }),
-    new winston.transports.File({ filename: "logs/combined.log" }),
-  ],
+      onConnectionError: (err) => {}, // Silent errors
+    })
+  );
+}
+
+const logger = winston.createLogger({
+  levels: customLevels.levels,
+  level: "debug",
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: baseTransports,
 }) as Logger & {
   api: LeveledLogMethod;
 };
