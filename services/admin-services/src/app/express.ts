@@ -6,11 +6,10 @@ import client from "prom-client";
 import { healthRoutes } from "./routes/health";
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import { redisServices } from "./services/redis";
+import { redisServices } from  "./services/redis"
 import passport from "passport";
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { authRoutes } from "./routes/auth";
-import { patientRoutes } from "./routes/patient";
 import { adminRoutes } from "./routes/admin";
 // import { dbInstanceJobQueue, notificationJobQueue } from "../server";
 
@@ -126,14 +125,14 @@ export function createExpressApp(): Application {
   /**
    * Now using multiple routes
    */
-  app.use("/api/v1/auth", authRoutes); // Authentication routes (login, register, profile, logout)
-  app.use("/api/v1/patient", patientRoutes); // Patient routes (proxied to patient-service)
-  app.use("/api/v1/admin", adminRoutes); // Admin routes (proxied to admin-service, provider-only)
+  app.use("/api/v1/auth", authRoutes); // Authentication routes
+  app.use("/api/v1/admin", adminRoutes); // Admin routes (provider-only)
   app.use("/api/v1/health", healthRoutes); // for checking health of system
 
   /**
    * Attaching TRPC
    */
+
 
   // app.get("/test", async (req: Request, res: Response) => {
   //   const user = await db.user.update({
