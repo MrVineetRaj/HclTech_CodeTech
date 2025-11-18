@@ -3,6 +3,7 @@
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
+    "@types/mongoose": "^5.11.97",
     "@types/node": "^24.10.1",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.17",
@@ -27,6 +28,7 @@
   "type": "commonjs",
   "dependencies": {
     "@types/express-session": "^1.18.2",
+    "axios": "^1.7.9",
     "bullmq": "^5.63.2",
     "connect-redis": "^9.0.0",
     "cookie-parser": "^1.4.7",
@@ -34,6 +36,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-rate-limit": "^8.2.1",
+    "mongoose": "^8.9.3",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "prom-client": "^15.1.3",

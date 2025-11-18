@@ -15,6 +15,8 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   REDIS_HOST: z.string().min(1, "REDIS_HOST is required"),
   REDIS_PORT: z.string().min(1, "REDIS_PORT is required"),
+  VAPI_API_KEY: z.string().min(1, "VAPI_API_KEY is required"),
+  VAPI_PHONE_NUMBER_ID: z.string().min(1, "VAPI_PHONE_NUMBER_ID is required"),
 });
 
 /**

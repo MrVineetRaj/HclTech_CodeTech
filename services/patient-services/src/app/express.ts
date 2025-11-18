@@ -6,10 +6,11 @@ import client from "prom-client";
 import { healthRoutes } from "./routes/health";
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import { redisServices } from  "./services/redis"
+import { redisServices } from "./services/redis";
 import passport from "passport";
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { patientRoutes } from "./routes/patient";
+import { notificationRoutes } from "./routes/notification";
 // import { dbInstanceJobQueue, notificationJobQueue } from "../server";
 
 import { ApiResponse, AsyncHandler } from "./lib/api.helper";
@@ -40,7 +41,6 @@ export function createExpressApp(): Application {
     })
   );
 
-
   /**
    * Some express middlewares setup to make sure that it can parse
    * - json body
@@ -50,13 +50,12 @@ export function createExpressApp(): Application {
   app.use(express.json());
   app.use(cookieParser());
 
-
   /**
    * Now using multiple routes
    */
   app.use("/api/v1/patient", patientRoutes); // for  managing user data
   app.use("/api/v1/health", healthRoutes); // for checking health of system
-
+  app.use("/api/v1/notification", notificationRoutes); // for sending notifications
 
   return app;
 }
