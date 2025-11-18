@@ -20,5 +20,7 @@ export default [
   // Patient portal
   layout("routes/patient.tsx", [
     route("patient/dashboard", "routes/patient.dashboard.tsx"),
+    route("patient/medications", "routes/patient.medications.tsx"),
+    route("patient/goals", "routes/patient.goals.tsx"),
   ]),
 ] satisfies RouteConfig;

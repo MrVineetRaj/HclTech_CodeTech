@@ -4,167 +4,201 @@ import type {
   IUserGoals,
   IGoalTracking,
   IMedicalCondition,
-  IHealthProvider,
 } from "./types";
 
 /**
- * API service for patient-related operations
- */
-
-/**
- * Get patient profile
+ * Patient Profile APIs
  */
 export async function getPatientProfile(): Promise<IPatient> {
   try {
-    const response = await apiClient.get<ApiResponse<IPatient>>(
-      "/api/v1/patient/profile"
-    );
-
-    if (response.data.success && response.data.result) {
-      return response.data.result;
+    const response = await apiClient.get<any>("/api/v1/patient/profile");
+    if (response.data.data) {
+      return response.data.data;
     }
-
-    throw new Error(response.data.message || "Failed to fetch profile");
+    throw new Error(response.data.message || "Failed to fetch patient profile");
   } catch (error) {
     throw new Error(handleApiError(error));
   }
 }
 
-/**
- * Get patient's health provider
- */
-export async function getHealthProvider(): Promise<IHealthProvider> {
+export async function updatePatientProfile(data: Partial<IPatient>): Promise<IPatient> {
   try {
-    const response = await apiClient.get<ApiResponse<IHealthProvider>>(
-      "/api/v1/patient/health-provider"
-    );
-
-    if (response.data.success && response.data.result) {
-      return response.data.result;
+    const response = await apiClient.put<any>("/api/v1/patient/profile", data);
+    if (response.data.data) {
+      return response.data.data;
     }
-
-    throw new Error(response.data.message || "Failed to fetch health provider");
+    throw new Error(response.data.message || "Failed to update profile");
   } catch (error) {
     throw new Error(handleApiError(error));
   }
 }
 
 /**
- * Get patient's medical conditions
- */
-export async function getMedicalConditions(): Promise<IMedicalCondition[]> {
-  try {
-    const response = await apiClient.get<ApiResponse<IMedicalCondition[]>>(
-      "/api/v1/patient/medical-conditions"
-    );
-
-    if (response.data.success && response.data.result) {
-      return response.data.result;
-    }
-
-    return [];
-  } catch (error) {
-    throw new Error(handleApiError(error));
-  }
-}
-
-/**
- * Get patient's goals
- * @param category - Filter by category: "medication" | "general" | "healthcheckup"
+ * User Goals APIs
  */
 export async function getUserGoals(category?: string): Promise<IUserGoals[]> {
   try {
     const url = category
       ? `/api/v1/patient/goals/category/${category}`
       : "/api/v1/patient/goals";
-
-    const response = await apiClient.get<ApiResponse<IUserGoals[]>>(url);
-
-    if (response.data.success && response.data.result) {
-      return response.data.result;
+    const response = await apiClient.get<any>(url);
+    if (response.data.data) {
+      return response.data.data;
     }
+    throw new Error(response.data.message || "Failed to fetch user goals");
+  } catch (error) {
+    throw new Error(handleApiError(error));
+  }
+}
 
-    return [];
+export async function createUserGoal(data: Partial<IUserGoals>): Promise<IUserGoals> {
+  try {
+    const response = await apiClient.post<any>("/api/v1/patient/goals", data);
+    if (response.data.data) {
+      return response.data.data;
+    }
+    throw new Error(response.data.message || "Failed to create goal");
+  } catch (error) {
+    throw new Error(handleApiError(error));
+  }
+}
+
+export async function updateUserGoal(id: string, data: Partial<IUserGoals>): Promise<IUserGoals> {
+  try {
+    const response = await apiClient.put<any>(`/api/v1/patient/goals/${id}`, data);
+    if (response.data.data) {
+      return response.data.data;
+    }
+    throw new Error(response.data.message || "Failed to update goal");
+  } catch (error) {
+    throw new Error(handleApiError(error));
+  }
+}
+
+export async function deleteUserGoal(id: string): Promise<void> {
+  try {
+    await apiClient.delete(`/api/v1/patient/goals/${id}`);
   } catch (error) {
     throw new Error(handleApiError(error));
   }
 }
 
 /**
- * Get patient's goal tracking
+ * Medical Conditions APIs
+ */
+export async function getMedicalConditions(category?: string): Promise<IMedicalCondition[]> {
+  try {
+    const url = category
+      ? `/api/v1/patient/medical-conditions/category/${category}`
+      : "/api/v1/patient/medical-conditions";
+    const response = await apiClient.get<any>(url);
+    if (response.data.data) {
+      return response.data.data;
+    }
+    throw new Error(response.data.message || "Failed to fetch medical conditions");
+  } catch (error) {
+    throw new Error(handleApiError(error));
+  }
+}
+
+export async function createMedicalCondition(data: Partial<IMedicalCondition>): Promise<IMedicalCondition> {
+  try {
+    const response = await apiClient.post<any>("/api/v1/patient/medical-conditions", data);
+    if (response.data.data) {
+      return response.data.data;
+    }
+    throw new Error(response.data.message || "Failed to create medical condition");
+  } catch (error) {
+    throw new Error(handleApiError(error));
+  }
+}
+
+export async function updateMedicalCondition(id: string, data: Partial<IMedicalCondition>): Promise<IMedicalCondition> {
+  try {
+    const response = await apiClient.put<any>(`/api/v1/patient/medical-conditions/${id}`, data);
+    if (response.data.data) {
+      return response.data.data;
+    }
+    throw new Error(response.data.message || "Failed to update medical condition");
+  } catch (error) {
+    throw new Error(handleApiError(error));
+  }
+}
+
+export async function deleteMedicalCondition(id: string): Promise<void> {
+  try {
+    await apiClient.delete(`/api/v1/patient/medical-conditions/${id}`);
+  } catch (error) {
+    throw new Error(handleApiError(error));
+  }
+}
+
+/**
+ * Goal Tracking APIs
  */
 export async function getGoalTracking(): Promise<IGoalTracking[]> {
   try {
-    const response = await apiClient.get<ApiResponse<IGoalTracking[]>>(
-      "/api/v1/patient/goal-tracking"
-    );
-
-    if (response.data.success && response.data.result) {
-      return response.data.result;
+    const response = await apiClient.get<any>("/api/v1/patient/goal-tracking");
+    if (response.data.data) {
+      return response.data.data;
     }
-
-    return [];
+    throw new Error(response.data.message || "Failed to fetch goal tracking");
   } catch (error) {
     throw new Error(handleApiError(error));
   }
 }
 
-/**
- * Get completed goals
- */
-export async function getCompletedGoals(): Promise<IGoalTracking[]> {
-  try {
-    const response = await apiClient.get<ApiResponse<IGoalTracking[]>>(
-      "/api/v1/patient/goal-tracking/completed"
-    );
-
-    if (response.data.success && response.data.result) {
-      return response.data.result;
-    }
-
-    return [];
-  } catch (error) {
-    throw new Error(handleApiError(error));
-  }
-}
-
-/**
- * Get pending goals
- */
 export async function getPendingGoals(): Promise<IGoalTracking[]> {
   try {
-    const response = await apiClient.get<ApiResponse<IGoalTracking[]>>(
-      "/api/v1/patient/goal-tracking/pending"
-    );
-
-    if (response.data.success && response.data.result) {
-      return response.data.result;
+    const response = await apiClient.get<any>("/api/v1/patient/goal-tracking/pending");
+    if (response.data.data) {
+      return response.data.data;
     }
-
-    return [];
+    throw new Error(response.data.message || "Failed to fetch pending goals");
   } catch (error) {
     throw new Error(handleApiError(error));
   }
 }
 
-/**
- * Update goal tracking (mark as completed)
- */
-export async function updateGoalTracking(
-  id: string,
-  data: { completed?: boolean; target?: number }
-): Promise<IGoalTracking> {
+export async function getCompletedGoals(): Promise<IGoalTracking[]> {
   try {
-    const response = await apiClient.put<ApiResponse<IGoalTracking>>(
-      `/api/v1/patient/goal-tracking/${id}`,
-      data
-    );
-
-    if (response.data.success && response.data.result) {
-      return response.data.result;
+    const response = await apiClient.get<any>("/api/v1/patient/goal-tracking/completed");
+    if (response.data.data) {
+      return response.data.data;
     }
+    throw new Error(response.data.message || "Failed to fetch completed goals");
+  } catch (error) {
+    throw new Error(handleApiError(error));
+  }
+}
 
+export async function createGoalTracking(data: Partial<IGoalTracking>): Promise<IGoalTracking> {
+  try {
+    const response = await apiClient.post<any>("/api/v1/patient/goal-tracking", data);
+    if (response.data.data) {
+      return response.data.data;
+    }
+    throw new Error(response.data.message || "Failed to create goal tracking");
+  } catch (error) {
+    throw new Error(handleApiError(error));
+  }
+}
+
+export async function updateGoalTracking(id: string, data: Partial<IGoalTracking>): Promise<IGoalTracking> {
+  try {
+    const response = await apiClient.put<any>(`/api/v1/patient/goal-tracking/${id}`, data);
+    if (response.data.data) {
+      return response.data.data;
+    }
     throw new Error(response.data.message || "Failed to update goal tracking");
+  } catch (error) {
+    throw new Error(handleApiError(error));
+  }
+}
+
+export async function deleteGoalTracking(id: string): Promise<void> {
+  try {
+    await apiClient.delete(`/api/v1/patient/goal-tracking/${id}`);
   } catch (error) {
     throw new Error(handleApiError(error));
   }

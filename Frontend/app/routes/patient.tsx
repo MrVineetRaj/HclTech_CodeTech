@@ -1,11 +1,11 @@
-import { Link, Outlet, useNavigate } from "react-router";
+import { Link, Outlet, useNavigate, useLocation } from "react-router";
 import { useEffect, useState } from "react";
 import { getCurrentUser, logoutPatient } from "../lib/auth";
-import type { IPatient } from "../lib/types";
 
 export default function PatientLayout() {
   const navigate = useNavigate();
-  const [user, setUser] = useState<IPatient | null>(null);
+  const location = useLocation();
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -67,21 +67,33 @@ export default function PatientLayout() {
           <div className="flex space-x-8">
             <Link
               to="/patient/dashboard"
-              className="px-3 py-4 text-sm font-medium text-gray-700 hover:text-blue-600 hover:border-b-2 hover:border-blue-600 transition"
+              className={`px-3 py-4 text-sm font-medium border-b-2 transition ${
+                location.pathname === "/patient/dashboard"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-700 hover:text-blue-600"
+              }`}
             >
-              Dashboard
+              📊 Dashboard
             </Link>
             <Link
               to="/patient/medications"
-              className="px-3 py-4 text-sm font-medium text-gray-700 hover:text-blue-600 hover:border-b-2 hover:border-blue-600 transition"
+              className={`px-3 py-4 text-sm font-medium border-b-2 transition ${
+                location.pathname === "/patient/medications"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-700 hover:text-blue-600"
+              }`}
             >
-              Medications
+              💊 Medications
             </Link>
             <Link
               to="/patient/goals"
-              className="px-3 py-4 text-sm font-medium text-gray-700 hover:text-blue-600 hover:border-b-2 hover:border-blue-600 transition"
+              className={`px-3 py-4 text-sm font-medium border-b-2 transition ${
+                location.pathname === "/patient/goals"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-700 hover:text-blue-600"
+              }`}
             >
-              Goals
+              🎯 Goals
             </Link>
           </div>
         </div>
