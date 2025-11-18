@@ -57,8 +57,8 @@ const userGoalsSchema = new Schema<IUserGoals>(
 );
 
 // Create compound indexes for better query performance
+// Note: healthProviderId and patientId already have index: true
 userGoalsSchema.index({ patientId: 1, category: 1 });
-userGoalsSchema.index({ healthProviderId: 1 });
 
 // Export the model
 export const UserGoals = model<IUserGoals>("UserGoals", userGoalsSchema);

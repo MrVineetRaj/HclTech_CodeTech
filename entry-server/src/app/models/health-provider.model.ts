@@ -81,7 +81,7 @@ const healthProviderSchema = new Schema<IHealthProvider>(
 );
 
 // Create indexes for better query performance
-healthProviderSchema.index({ email: 1 });
+// Note: email already has unique: true which creates an index
 healthProviderSchema.index({ phone: 1 });
 
 // Export the model

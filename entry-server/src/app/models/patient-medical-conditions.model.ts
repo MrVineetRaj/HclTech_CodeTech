@@ -59,8 +59,8 @@ const patientMedicalConditionsSchema = new Schema<IPatientMedicalConditions>(
 );
 
 // Create indexes for better query performance
+// Note: patientId already has index: true
 patientMedicalConditionsSchema.index({ patientId: 1, category: 1 });
-patientMedicalConditionsSchema.index({ patientId: 1 });
 
 // Export the model
 export const PatientMedicalConditions = model<IPatientMedicalConditions>(
