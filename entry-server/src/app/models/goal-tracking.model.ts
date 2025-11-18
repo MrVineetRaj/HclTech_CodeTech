@@ -55,10 +55,10 @@ const goalTrackingSchema = new Schema<IGoalTracking>(
 );
 
 // Create compound indexes for better query performance
+// Note: userId, healthProviderId, and goalID already have index: true
 goalTrackingSchema.index({ userId: 1, goalID: 1 });
 goalTrackingSchema.index({ userId: 1, completed: 1 });
 goalTrackingSchema.index({ healthProviderId: 1, userId: 1 });
-goalTrackingSchema.index({ goalID: 1 });
 
 // Export the model
 export const GoalTracking = model<IGoalTracking>(
