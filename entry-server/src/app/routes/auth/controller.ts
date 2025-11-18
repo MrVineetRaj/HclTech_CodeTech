@@ -73,12 +73,7 @@ class Controller {
     } = req.body;
 
     console.log(req.body);
-    const requiredParameters = [
-      "fullname",
-      "email",
-      "password",
-      "healthProviderID",
-    ];
+    const requiredParameters = ["fullname", "email", "password"];
 
     // Validate required parameters
     for (const param of requiredParameters) {
