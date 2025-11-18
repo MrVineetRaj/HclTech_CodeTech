@@ -1,14 +1,13 @@
 import { NextFunction, Router, type Request, type Response } from "express";
 import { ApiResponse, AsyncHandler } from "../../lib/api.helper";
-import { isProvider } from "../../middlewares/is-provider";
 import Controller from "./controller";
 
 export function createRouter(): Router {
   const router = Router();
   const controller = new Controller();
 
-  // All admin routes require provider authentication
-  router.use(isProvider);
+  // NOTE: Authentication is handled by entry-server before proxying
+  // No auth middleware needed here
 
   // ==================== Patient Management Routes ====================
   
