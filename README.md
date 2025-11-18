@@ -6,7 +6,7 @@ A comprehensive healthcare management platform connecting healthcare providers w
 
 **Two Portals:**
 
-- **Provider Portal** - Manage patients, medications, medical conditions, goals, and AI-powered reminders
+- **Healthcare Provider Portal** - Manage patients, medications, medical conditions, goals, and AI-powered reminders
 - **Patient Portal** - Track medications, goals, medical conditions, view health data, and receive AI call reminders
 
 ## 🏗️ Architecture
@@ -15,11 +15,11 @@ A comprehensive healthcare management platform connecting healthcare providers w
 
 **Microservices Architecture:**
 
-- **Entry Server** (Port 8080) - API Gateway with authentication & routing
-- **Admin Services** (Port 8083) - Provider/admin operations
-- **Patient Services** (Port 8082) - Patient-specific operations
-- **Workers** (Port 8084) - Background jobs & AI voice call integration
-- **Frontend** (Port 8080) - React.js SPA
+- **Entry Server** - API Gateway with authentication & routing
+- **Admin Services** - Provider/admin operations
+- **Patient Services** - Patient-specific operations
+- **Workers** - Background jobs & AI voice call integration
+- **Frontend** - React.js SPA
 
 ## 🗄️ Database Design
 
@@ -74,7 +74,7 @@ A comprehensive healthcare management platform connecting healthcare providers w
 
 ### DevOps
 
-- **Docker** & \*_Docker Compose_
+- **Docker** & Docker Compose
 - **Loki** for log aggregation
 
 ## 🚀 Getting Started
@@ -223,7 +223,7 @@ HASH_KEY=your-hash-key-here
 
 ### 🎬 Running the Application
 
-**Option 1: Development Mode (Recommended)**
+**Option 1: Development Mode**
 
 Open **5 separate terminals** and run each service:
 
@@ -231,27 +231,22 @@ Open **5 separate terminals** and run each service:
 # Terminal 1 - Entry Server (API Gateway)
 cd entry-server
 npm run dev
-# ✅ Running on http://localhost:8080
 
 # Terminal 2 - Admin Services
 cd services/admin-services
 npm run dev
-# ✅ Running on http://localhost:8083
 
 # Terminal 3 - Patient Services
 cd services/patient-services
 npm run dev
-# ✅ Running on http://localhost:8082
 
 # Terminal 4 - Workers (Background Jobs)
 cd workers
 npm run dev
-# ✅ Running on http://localhost:8084
 
 # Terminal 5 - Frontend
 cd Frontend
 npm run dev
-# ✅ Running on http://localhost:8080 (served by entry-server)
 ```
 
 **Option 2: Docker Compose (Production)**
@@ -353,38 +348,6 @@ HclTech_CodeTech/
 └── README.md                 # This file
 ```
 
-## 🧪 Testing API Endpoints
-
-### Patient Routes
-
-```bash
-# Get patient profile
-curl http://localhost:8080/api/v1/patient/profile
-
-# Get medications
-curl http://localhost:8080/api/v1/patient/medications
-
-# Get goals
-curl http://localhost:8080/api/v1/patient/goals
-```
-
-### Admin Routes
-
-```bash
-# Get all patients (provider)
-curl http://localhost:8080/api/v1/admin/patients?providerId=YOUR_PROVIDER_ID
-
-# Add medical condition
-curl -X POST http://localhost:8080/api/v1/admin/patients/PATIENT_ID/medical-conditions \
-  -H "Content-Type: application/json" \
-  -d '{"condition":"Diabetes","diagnosedDate":"2024-01-01"}'
-
-# Send AI reminder call
-curl -X POST http://localhost:8080/api/v1/admin/send-reminder \
-  -H "Content-Type: application/json" \
-  -d '{"patientId":"PATIENT_ID","type":"medication","message":"Time to take your medicine"}'
-```
-
 ## 📱 Usage Guide
 
 ### For Healthcare Providers:
@@ -409,6 +372,6 @@ curl -X POST http://localhost:8080/api/v1/admin/send-reminder \
 
 ## 👥 Team
 
-Vineet Raj
-Anurag Singh
-Mohit Bharti
+- Vineet Raj
+- Anurag Singh
+- Mohit Bharti
