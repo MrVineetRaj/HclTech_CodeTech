@@ -5,19 +5,22 @@ A medication management platform connecting doctors with patients through medica
 ## 📋 Overview
 
 **Two Portals:**
+
 - **Doctor/Assistant Portal** - Manage patients, medications, goals, and diet plans
 - **Patient Portal** - Track medications, goals, diet, view health blogs, and receive AI call reminders
 
-## High  Level
+## High Level
+
 ![Architecture](./architecture.png)
 
 ## Database Design
-![Architecture](./db-schema.png)
 
+![Architecture](./db-schema.png)
 
 ## ✨ Features
 
 ### Doctor/Assistant Portal
+
 - Add patient details
 - Assign medications with schedules
 - Set daily health goals
@@ -25,6 +28,7 @@ A medication management platform connecting doctors with patients through medica
 - Send invitation links to patients
 
 ### Patient Portal
+
 - View medication schedule
 - Track and update goal status
 - Access personalized diet plan
@@ -32,6 +36,7 @@ A medication management platform connecting doctors with patients through medica
 - Receive AI voice call reminders for medication
 
 ### AI Voice Agent
+
 - Automated phone calls for medication reminders
 - Ask patients about medication adherence
 - Track compliance
@@ -48,6 +53,7 @@ A medication management platform connecting doctors with patients through medica
 ## 🚀 Installation
 
 ### Prerequisites
+
 - Node.js (v14+)
 - MongoDB
 - npm or yarn
@@ -55,20 +61,23 @@ A medication management platform connecting doctors with patients through medica
 ### Setup
 
 1. **Clone the repository**
+
    ```bash
-   git clone https://github.com/yourusername/medicare-platform.git
+   git clone https://github.com/yourusername/MediTech-platform.git
    cd MediTech-platform
    ```
 
 2. **Backend Setup**
+
    ```bash
    cd backend
    npm install
    ```
 
    Create `.env` file:
+
    ```env
-   MONGODB_URI=mongodb://localhost:27017/medicare
+   MONGODB_URI=mongodb://localhost:27017/MediTech
    JWT_SECRET=your_secret_key
    PORT=5000
    TWILIO_ACCOUNT_SID=your_twilio_sid
@@ -77,17 +86,20 @@ A medication management platform connecting doctors with patients through medica
    ```
 
 3. **Frontend Setup**
+
    ```bash
    cd frontend
    npm install
    ```
 
    Create `.env` file:
+
    ```env
    REACT_APP_API_URL=http://localhost:5000
    ```
 
 4. **Run the Application**
+
    ```bash
    # Terminal 1 - Backend
    cd backend
@@ -105,7 +117,7 @@ A medication management platform connecting doctors with patients through medica
 ## 📁 Project Structure
 
 ```
-medicare-platform/
+MediTech-platform/
 ├── backend/
 │   ├── models/          # MongoDB models
 │   ├── routes/          # API routes
@@ -124,10 +136,10 @@ medicare-platform/
 │       └── App.js       # Main app
 ```
 
-
 ## 📱 Usage
 
 ### For Doctors/Assistants:
+
 1. Login to doctor portal
 2. Add patient details
 3. Add medications with schedule
@@ -136,6 +148,7 @@ medicare-platform/
 6. Send invitation to patient
 
 ### For Patients:
+
 1. Click invitation link
 2. Complete registration
 3. View medications and goals
