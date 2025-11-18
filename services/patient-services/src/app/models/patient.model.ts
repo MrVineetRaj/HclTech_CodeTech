@@ -28,7 +28,6 @@ const patientSchema = new Schema<IPatient>(
       type: Schema.Types.ObjectId,
       ref: "HealthProvider",
       required: [true, "Health Provider ID is required"],
-      index: true,
     },
     fullname: {
       type: String,
@@ -88,7 +87,7 @@ const patientSchema = new Schema<IPatient>(
 );
 
 // Create indexes for better query performance
-patientSchema.index({ email: 1 });
+// Note: email already has unique index from unique: true
 patientSchema.index({ phone: 1 });
 patientSchema.index({ healthProviderId: 1 });
 

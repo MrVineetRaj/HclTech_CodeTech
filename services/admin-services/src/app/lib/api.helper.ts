@@ -62,18 +62,18 @@ export class ApiResponse<T = any> {
   constructor({
     statusCode,
     message,
-    data,
+    result,
   }: {
     statusCode: number;
     message: string;
-    data?: T;
+    result?: T;
   }) {
     this.statusCode = statusCode;
     this.success =
       statusCode < 300 ? "OK" : statusCode < 400 ? "WARNING" : "ERROR";
     this.message = message;
-    if (data) {
-      this.data = data;
+    if (result) {
+      this.data = result;
     }
   }
 }

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { loginPatient, loginProvider } from "../lib/auth";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [userType, setUserType] = useState<"patient" | "provider">("patient");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -11,6 +13,7 @@ export default function Login() {
   const [errors, setErrors] = useState({
     email: "",
     password: "",
+    general: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -63,39 +66,28 @@ export default function Login() {
     }
 
     setIsLoading(true);
+    setErrors({ email: "", password: "", general: "" });
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('http://localhost:5000/api/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     email: formData.email,
-      //     password: formData.password,
-      //   }),
-      // });
-      // const data = await response.json();
+      const credentials = {
+        email: formData.email,
+        password: formData.password,
+      };
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const { user, message } = userType === "patient" 
+        ? await loginPatient(credentials)
+        : await loginProvider(credentials);
 
-      console.log("Login data:", formData);
-
-      // TODO: Store token in localStorage
-      // localStorage.setItem('token', data.token);
-      // localStorage.setItem('userType', data.userType);
+      console.log("Login successful:", user);
 
       // Navigate based on user type
-      // if (data.userType === 'doctor') {
-      //   navigate('/doctor/dashboard');
-      // } else {
-      //   navigate('/patient/dashboard');
-      // }
-
-      alert("Login successful! (Demo mode)");
+      navigate(userType === "patient" ? "/patient/dashboard" : "/provider/dashboard");
     } catch (error) {
       console.error("Login error:", error);
-      alert("Login failed. Please try again.");
+      setErrors({
+        ...errors,
+        general: error instanceof Error ? error.message : "Login failed. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -110,11 +102,44 @@ export default function Login() {
             <span className="text-white text-3xl font-bold">M</span>
           </div>
           <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
-          <p className="text-gray-600 mt-2">Login to your MediCare account</p>
+          <p className="text-gray-600 mt-2">Login to your MediTech account</p>
+        </div>
+
+        {/* User Type Selector */}
+        <div className="flex gap-2 mb-6">
+          <button
+            type="button"
+            onClick={() => setUserType("patient")}
+            className={`flex-1 py-3 rounded-lg font-medium transition ${
+              userType === "patient"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            👤 Patient
+          </button>
+          <button
+            type="button"
+            onClick={() => setUserType("provider")}
+            className={`flex-1 py-3 rounded-lg font-medium transition ${
+              userType === "provider"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            🏥 Provider
+          </button>
         </div>
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* General Error Message */}
+          {errors.general && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              {errors.general}
+            </div>
+          )}
+
           {/* Email Field */}
           <div>
             <label
@@ -129,7 +154,7 @@ export default function Login() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition text-gray-900 ${
                 errors.email
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-blue-500 focus:border-transparent"
@@ -155,7 +180,7 @@ export default function Login() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:outline-none transition text-gray-900 ${
                 errors.password
                   ? "border-red-500 focus:ring-red-500"
                   : "border-gray-300 focus:ring-blue-500 focus:border-transparent"
