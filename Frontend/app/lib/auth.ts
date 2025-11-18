@@ -24,11 +24,45 @@ export async function loginPatient(
     // Backend uses 'data' field, not 'result'
     if (response.data.data) {
       // Store user data in localStorage
-      localStorage.setItem("user", JSON.stringify(response.data.data));
+      const userData = { ...response.data.data, userType: "patient" };
+      localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("auth_token", "authenticated");
+      localStorage.setItem("userType", "patient");
 
       return {
-        user: response.data.data,
+        user: userData,
+        message: response.data.message,
+      };
+    }
+
+    throw new Error(response.data.message || "Login failed");
+  } catch (error) {
+    throw new Error(handleApiError(error));
+  }
+}
+
+/**
+ * Login provider (doctor/assistant)
+ */
+export async function loginProvider(
+  credentials: LoginCredentials
+): Promise<{ user: any; message: string }> {
+  try {
+    const response = await apiClient.post<any>(
+      "/api/v1/auth/login/provider",
+      credentials
+    );
+
+    // Backend uses 'data' field, not 'result'
+    if (response.data.data) {
+      // Store user data in localStorage
+      const userData = { ...response.data.data, userType: "provider" };
+      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("auth_token", "authenticated");
+      localStorage.setItem("userType", "provider");
+
+      return {
+        user: userData,
         message: response.data.message,
       };
     }
@@ -70,13 +104,30 @@ export async function registerPatient(
  */
 export async function logoutPatient(): Promise<void> {
   try {
-    await apiClient.post("/api/v1/patient/logout");
+    await apiClient.post("/api/v1/auth/logout");
   } catch (error) {
     console.error("Logout error:", error);
   } finally {
     // Clear local storage regardless of API response
     localStorage.removeItem("user");
     localStorage.removeItem("auth_token");
+    localStorage.removeItem("userType");
+  }
+}
+
+/**
+ * Logout provider
+ */
+export async function logoutProvider(): Promise<void> {
+  try {
+    await apiClient.post("/api/v1/auth/logout");
+  } catch (error) {
+    console.error("Logout error:", error);
+  } finally {
+    // Clear local storage regardless of API response
+    localStorage.removeItem("user");
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("userType");
   }
 }
 
@@ -100,6 +151,27 @@ export function getCurrentUser(): IPatient | null {
  */
 export function isAuthenticated(): boolean {
   return !!localStorage.getItem("auth_token");
+}
+
+/**
+ * Get user type (patient or provider)
+ */
+export function getUserType(): "patient" | "provider" | null {
+  return localStorage.getItem("userType") as "patient" | "provider" | null;
+}
+
+/**
+ * Check if current user is a provider
+ */
+export function isProvider(): boolean {
+  return getUserType() === "provider";
+}
+
+/**
+ * Check if current user is a patient
+ */
+export function isPatient(): boolean {
+  return getUserType() === "patient";
 }
 
 /**

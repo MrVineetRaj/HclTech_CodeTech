@@ -95,6 +95,26 @@ export default function PatientLayout() {
             >
               🎯 Goals
             </Link>
+            <Link
+              to="/patient/medical-conditions"
+              className={`px-3 py-4 text-sm font-medium border-b-2 transition ${
+                location.pathname === "/patient/medical-conditions"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              🏥 Medical Conditions
+            </Link>
+            <Link
+              to="/patient/profile"
+              className={`px-3 py-4 text-sm font-medium border-b-2 transition ${
+                location.pathname === "/patient/profile"
+                  ? "border-blue-600 text-blue-600"
+                  : "border-transparent text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              👤 Profile
+            </Link>
           </div>
         </div>
       </nav>

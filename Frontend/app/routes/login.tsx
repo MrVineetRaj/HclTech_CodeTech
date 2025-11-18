@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { loginPatient } from "../lib/auth";
+import { loginPatient, loginProvider } from "../lib/auth";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [userType, setUserType] = useState<"patient" | "provider">("patient");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -68,15 +69,19 @@ export default function Login() {
     setErrors({ email: "", password: "", general: "" });
 
     try {
-      const { user, message } = await loginPatient({
+      const credentials = {
         email: formData.email,
         password: formData.password,
-      });
+      };
+
+      const { user, message } = userType === "patient" 
+        ? await loginPatient(credentials)
+        : await loginProvider(credentials);
 
       console.log("Login successful:", user);
 
-      // Navigate to patient dashboard
-      navigate("/patient/dashboard");
+      // Navigate based on user type
+      navigate(userType === "patient" ? "/patient/dashboard" : "/provider/dashboard");
     } catch (error) {
       console.error("Login error:", error);
       setErrors({
@@ -97,7 +102,33 @@ export default function Login() {
             <span className="text-white text-3xl font-bold">M</span>
           </div>
           <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
-          <p className="text-gray-600 mt-2">Login to your MediCare account</p>
+          <p className="text-gray-600 mt-2">Login to your MediTech account</p>
+        </div>
+
+        {/* User Type Selector */}
+        <div className="flex gap-2 mb-6">
+          <button
+            type="button"
+            onClick={() => setUserType("patient")}
+            className={`flex-1 py-3 rounded-lg font-medium transition ${
+              userType === "patient"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            👤 Patient
+          </button>
+          <button
+            type="button"
+            onClick={() => setUserType("provider")}
+            className={`flex-1 py-3 rounded-lg font-medium transition ${
+              userType === "provider"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            🏥 Provider
+          </button>
         </div>
 
         {/* Login Form */}
