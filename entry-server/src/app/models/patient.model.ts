@@ -4,7 +4,7 @@ import { Schema, model, Document, Types } from "mongoose";
  * TypeScript interface for Patient document
  */
 export interface IPatient extends Document {
-  healthProviderId: Types.ObjectId;
+  healthProviderId?: Types.ObjectId;
   fullname: string;
   email: string;
   password: string;
@@ -27,7 +27,7 @@ const patientSchema = new Schema<IPatient>(
     healthProviderId: {
       type: Schema.Types.ObjectId,
       ref: "HealthProvider",
-      required: [true, "Health Provider ID is required"],
+      required: false,
       index: true,
     },
     fullname: {
