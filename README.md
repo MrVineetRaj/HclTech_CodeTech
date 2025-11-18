@@ -12,7 +12,7 @@ A medication management platform connecting doctors with patients through medica
 ![Architecture](./architecture.png)
 
 ## Database Design
-<img width="1823" height="1162" alt="image" src="https://github.com/user-attachments/assets/fe3089b5-4128-4892-aa18-a37e721212c2" />
+![Architecture](./db-schema.png)
 
 
 ## ✨ Features
